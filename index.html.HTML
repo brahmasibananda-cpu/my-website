@@ -1,0 +1,1585 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Brahma Transport - Salary Pro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --light: #f8fafc;
+        }
+
+        * { box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            overflow-x: hidden;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        /* --- GLASS MORPHISM & 3D --- */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        /* --- HOME PAGE & LOGO --- */
+        #homePage {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 1000; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .logo-circle {
+            width: 160px; height: 160px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            margin-bottom: 40px; overflow: hidden; display: flex;
+            align-items: center; justify-content: center;
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.4), inset -2px -2px 10px rgba(0,0,0,0.2);
+            animation: float 3s ease-in-out infinite;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+
+        .logo-circle::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
+        .logo-circle i { font-size: 70px; color: white; z-index: 1; }
+
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+        .welcome-text { color: white; text-align: center; margin-bottom: 40px; }
+        .welcome-text h1 { 
+            font-size: 48px; margin: 0; text-transform: uppercase; 
+            letter-spacing: 3px; font-weight: 800;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+            animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .welcome-text p { 
+            font-size: 16px; font-weight: 600; margin: 10px 0; 
+            color: rgba(255,255,255,0.9);
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .tractor-container { 
+            cursor: pointer; text-align: center; 
+            animation: bounce 2s infinite;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+        }
+        .tractor-container i { 
+            font-size: 100px; 
+            background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .tractor-container div { 
+            color: white; margin-top: 20px; font-size: 14px; 
+            letter-spacing: 2px; font-weight: 700;
+            opacity: 0.9;
+        }
+
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        /* --- MAIN APP --- */
+        #mainApp { display: none; padding-bottom: 110px; max-width: 1200px; margin: 0 auto; }
+        
+        .branding-header { 
+            padding: 16px 20px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(30px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .header-logo { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; border: 2px solid var(--primary); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
+        .branding-header i { color: var(--primary); cursor: pointer; font-size: 24px; transition: all 0.3s; }
+        .branding-header i:hover { transform: rotate(90deg) scale(1.1); }
+
+        .hero { 
+            padding: 30px; 
+            margin: 20px; 
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.2), transparent);
+            pointer-events: none;
+        }
+
+        .main-balance { 
+            font-size: 48px; font-weight: 900; margin: 10px 0; 
+            color: white;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero span {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stats-row { display: flex; gap: 12px; margin: 20px; flex-wrap: wrap; }
+        .stat-box { 
+            flex: 1; min-width: 110px;
+            padding: 16px 12px; 
+            text-align: center;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .stat-box:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15); }
+        .stat-box div:first-child { font-size: 10px; color: #64748b; font-weight: 700; letter-spacing: 1px; }
+        .stat-box div:last-child { font-size: 22px; font-weight: 900; margin-top: 8px; }
+        
+        .content { padding: 15px; }
+        .ios-card-group { 
+            padding: 24px; 
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            margin: 15px;
+        }
+        
+        .icon-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); 
+            gap: 12px; margin-bottom: 24px; 
+        }
+        .icon-btn { 
+            background: rgba(255, 255, 255, 0.5);
+            border: 1.5px solid rgba(99, 102, 241, 0.3);
+            padding: 14px 8px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 13px;
+            border-radius: 14px;
+            backdrop-filter: blur(10px);
+        }
+        .icon-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2); }
+        .icon-btn:active { transform: scale(0.95); }
+        .icon-btn.active { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white; 
+            border-color: white;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+        .icon-btn i { font-size: 28px; display: block; margin-bottom: 6px; }
+        
+        .calc-area { 
+            background: rgba(255, 255, 255, 0.6);
+            padding: 18px; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin: 15px 0;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+        
+        input { 
+            width: 100%; 
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            background: rgba(255, 255, 255, 0.6);
+            padding: 12px 14px; 
+            font-size: 14px; 
+            margin-bottom: 10px; 
+            outline: none;
+            font-weight: 500;
+            font-family: 'Segoe UI', sans-serif;
+            border-radius: 10px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        input:focus { 
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .btn-ios { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white; 
+            border: none;
+            padding: 16px; 
+            font-size: 15px; 
+            font-weight: 700; 
+            width: 100%; 
+            cursor: pointer; 
+            margin-top: 12px;
+            border-radius: 12px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+        .btn-ios:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(99, 102, 241, 0.4); }
+        .btn-ios:active { transform: scale(0.98); }
+        .btn-ios:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .history-card { 
+            background: rgba(255, 255, 255, 0.6);
+            padding: 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 12px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border-radius: 14px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+        .history-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); }
+        .history-card strong { color: var(--primary); font-size: 15px; }
+        .history-card small { color: #64748b; font-weight: 600; }
+        
+        .share-circle { 
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white; 
+            width: 44px; height: 44px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 22px; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+        .share-circle:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); }
+        .share-circle:active { transform: scale(0.95); }
+        
+        .update-btn { 
+            background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%);
+            color: white; 
+            border: none;
+            padding: 8px 12px; 
+            font-size: 12px; 
+            font-weight: 600; 
+            margin-top: 8px; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        .update-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(245, 158, 11, 0.4); }
+        .update-btn:active { transform: scale(0.95); }
+
+        #settingsOverlay, #updateOverlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            backdrop-filter: blur(8px);
+            z-index: 200;
+            overflow: auto;
+        }
+        
+        .settings-modal { 
+            position: absolute; 
+            bottom: 0; 
+            width: 100%; 
+            max-width: 500px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 28px; 
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-top-left-radius: 28px;
+            border-top-right-radius: 28px;
+            box-sizing: border-box; 
+            max-height: 90vh; 
+            overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .settings-modal h2,
+        .settings-modal h3 {
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        .success-toast { 
+            position: fixed; 
+            bottom: 80px; left: 15px; right: 15px; 
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white; 
+            padding: 16px 18px; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center; 
+            animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 500;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        @keyframes slideUp { from { transform: translateY(120px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* DEVICE MODE SWITCHING */
+        body.mobile-mode {
+            --layout: 'mobile';
+        }
+        
+        body.desktop-mode {
+            --layout: 'desktop';
+        }
+
+        /* Mobile Mode Styles */
+        body.mobile-mode #mainApp {
+            padding-bottom: 110px;
+            max-width: 100%;
+        }
+
+        body.mobile-mode .hero {
+            margin: 15px;
+            border-radius: 20px;
+        }
+
+        body.mobile-mode .icon-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        body.mobile-mode .stats-row {
+            flex-direction: column;
+        }
+
+        body.mobile-mode .main-balance {
+            font-size: 36px;
+        }
+
+        /* Desktop Mode Styles */
+        body.desktop-mode {
+            --layout: 'desktop';
+        }
+
+        body.desktop-mode #mainApp {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        body.desktop-mode .branding-header {
+            border-radius: 16px;
+            margin: 20px;
+        }
+
+        body.desktop-mode .hero {
+            margin: 20px auto;
+            max-width: 900px;
+            border-radius: 24px;
+        }
+
+        body.desktop-mode .stats-row {
+            flex-direction: row;
+            margin: 20px auto;
+            max-width: 900px;
+        }
+
+        body.desktop-mode .icon-grid {
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+        }
+
+        body.desktop-mode .ios-card-group {
+            margin: 20px auto;
+            max-width: 900px;
+            border-radius: 24px;
+        }
+
+        body.desktop-mode .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        body.desktop-mode #historyList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        body.desktop-mode .history-card {
+            flex-direction: column;
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        body.desktop-mode .settings-modal {
+            max-width: 600px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .icon-grid { grid-template-columns: repeat(3, 1fr); }
+            .stats-row { flex-direction: column; }
+            .stat-box { min-width: auto; }
+            .main-balance { font-size: 36px; }
+            .welcome-text h1 { font-size: 32px; }
+        }
+
+        @media (min-width: 768px) {
+            #mainApp { padding: 20px; }
+            .hero { margin: 20px auto; max-width: 700px; }
+            .ios-card-group { margin: 20px auto; max-width: 700px; }
+            .settings-modal { bottom: auto; top: 50%; transform: translateX(-50%) translateY(-50%); border-radius: 28px; }
+        }
+    </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pouchdb@8.0.1/dist/pouchdb.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pouchdb-adapter-memory@8.0.1/dist/pouchdb.memory.min.js"></script>
+ </head>
+ <body>
+  <div id="homePage">
+   <div class="logo-circle">
+    <img id="homeLogoImg" style="display:none;"> <i class="fas fa-camera" id="logoPlaceholder"></i>
+   </div>
+   <div class="welcome-text">
+    <h1 id="homeTransport">BRAHMA TRANSPORT</h1>
+    <p style="color:var(--ios-blue); font-weight:bold;">Tractor Management System</p>
+   </div>
+   <div class="tractor-container" onclick="launchApp()">
+    <i class="fas fa-tractor"></i>
+    <div style="color:white; margin-top:15px; font-size:12px; letter-spacing:1px; opacity:0.7;">
+     CLICK TO ENTER
+    </div>
+   </div>
+  </div>
+  <div id="mainApp">
+   <div class="branding-header">
+    <div style="display:flex; align-items:center; gap:10px;">
+     <img id="headerLogoImg" class="header-logo" style="display:none;">
+     <div>
+      <h4 id="displayTransport" style="margin:0;">Transport Name</h4><small id="displayDetail" style="color:var(--ios-sub);">Loading...</small>
+     </div>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center;">
+     <div style="display: flex; gap: 8px; align-items: center; background: rgba(255,255,255,0.5); padding: 6px 10px; border-radius: 10px; border: 1px solid rgba(99, 102, 241, 0.2);"><i class="fas fa-mobile-alt" id="mobileToggle" style="color: var(--primary); cursor: pointer; font-size: 16px; transition: all 0.3s; opacity: 0.6;" onclick="switchToMobile()" title="Mobile Mode"></i> <span style="color: #999; font-size: 12px;">|</span> <i class="fas fa-desktop" id="desktopToggle" style="color: var(--primary); cursor: pointer; font-size: 16px; transition: all 0.3s; opacity: 1;" onclick="switchToDesktop()" title="Desktop Mode"></i>
+     </div><i class="fas fa-chart-bar" id="reportIcon" style="color: var(--primary); cursor: pointer; font-size: 20px; transition: all 0.3s;" onclick="openReport()"></i> <i class="fas fa-cloud-upload-alt" id="syncIcon" style="color: var(--primary); cursor: pointer; font-size: 20px; transition: all 0.3s;" onclick="openSync()"></i> <i class="fas fa-cog" style="color: var(--primary); cursor: pointer; font-size: 20px; transition: all 0.3s;" onclick="openSettings()"></i>
+    </div>
+   </div>
+   <div class="hero">
+    <span style="color: var(--ios-sub); font-size: 11px; font-weight: 700;">TOTAL CASH IN HAND</span>
+    <div class="main-balance" id="netProfit">
+     ₹0
+    </div>
+   </div>
+   <div class="stats-row">
+    <div class="stat-box">
+     <div style="font-size:9px; color:var(--ios-sub);">
+      PAID
+     </div>
+     <div id="totalInc" style="font-weight:700; color:var(--ios-green);">
+      ₹0
+     </div>
+    </div>
+    <div class="stat-box">
+     <div style="font-size:9px; color:var(--ios-sub);">
+      PENDING
+     </div>
+     <div id="totalPend" style="font-weight:700; color:var(--ios-orange);">
+      ₹0
+     </div>
+    </div>
+    <div class="stat-box">
+     <div style="font-size:9px; color:var(--ios-sub);">
+      EXPENSE
+     </div>
+     <div id="totalExp" style="font-weight:700; color:var(--ios-red);">
+      ₹0
+     </div>
+    </div>
+   </div>
+   <div class="content">
+    <div class="ios-card-group">
+     <div class="icon-grid">
+      <div class="icon-btn active" onclick="updateMode('Trolley', 'Trips', 'Income', this); speakIcon('Trolley')"><i class="fas fa-truck"></i><span>Trolley</span>
+      </div>
+      <div class="icon-btn" onclick="updateMode('Rotavator', 'Time', 'Income', this); speakIcon('Rotavator')"><i class="fas fa-sync-alt"></i><span>Rota</span>
+      </div>
+      <div class="icon-btn" onclick="updateMode('Langala', 'Time', 'Income', this); speakIcon('Langala')"><i class="fas fa-tractor"></i><span>Langala</span>
+      </div>
+      <div class="icon-btn" onclick="updateMode('Diesel', 'Amount', 'Expense', this); speakIcon('Diesel')" style="color:var(--ios-red)"><i class="fas fa-gas-pump"></i><span>Diesel</span>
+      </div>
+      <div class="icon-btn" onclick="updateMode('Salary', 'Amount', 'Expense', this); speakIcon('Salary')" style="color:var(--ios-red)"><i class="fas fa-user-tie"></i><span>Salary</span>
+      </div>
+      <div class="icon-btn" onclick="updateMode('Repair', 'Qty', 'Expense', this); speakIcon('Repair')" style="color:var(--ios-red)"><i class="fas fa-wrench"></i><span>Repair</span>
+      </div>
+     </div><input type="date" id="entryDate">
+     <div class="calc-area">
+      <input type="number" id="unitQty" placeholder="Quantity / Trips / Days" oninput="calculateTotal()">
+      <div id="timeInputs" style="display:none; gap:10px;"><input type="number" id="hours" placeholder="Hrs" oninput="calculateTotal()"><input type="number" id="minutes" placeholder="Min" oninput="calculateTotal()">
+      </div><input type="number" id="unitRate" placeholder="Rate (₹)" oninput="calculateTotal()"> <input type="number" id="amountInput" placeholder="Direct Amount (₹)" oninput="calculateTotal()" style="display:none; border-bottom: 2px solid var(--ios-red);"> <input type="number" id="paidAmt" placeholder="Cash Received (₹)" oninput="calculateTotal()" style="border-bottom: 2px solid var(--ios-green);">
+      <div style="text-align:center; font-weight:700; font-size:16px; margin-top:5px;">
+       Total: ₹<span id="autoAmt">0</span> | Bal: <span id="pendingDisplay" style="color:var(--ios-red)">₹0</span>
+      </div>
+     </div><input type="text" id="note" placeholder="Customer / Driver Name"> <input type="tel" id="custPhone" placeholder="WhatsApp Number" maxlength="10"> <button class="btn-ios" onclick="saveEntry()">Save Entry</button>
+    </div>
+    <div id="historyList" style="margin-top:20px;"></div>
+   </div>
+  </div>
+  <div id="settingsOverlay">
+   <div class="settings-modal">
+    <h2>Settings</h2>
+    <div style="background:#f0f0f5; padding:15px; border-radius:15px; margin-bottom:15px; border:2px dashed #ccc; text-align:center;">
+     <p style="font-size:12px; margin-bottom:10px;">Upload Business Logo</p><input type="file" id="logoInput" accept="image/*">
+     <div style="margin-top: 20px;"><input type="text" id="setTransport" placeholder="Business Name" style="margin-bottom: 10px;"> <input type="text" id="setTractorNum" placeholder="Tractor Number" style="margin-bottom: 10px;"> <button class="btn-ios" onclick="saveSettings()">Save Settings</button> <button class="btn-ios" style="background:#8E8E93" onclick="closeSettings()">Cancel</button>
+     </div>
+    </div>
+    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #ddd;">
+     <h3 style="color: var(--danger); font-size: 14px; margin-bottom: 10px;">⚠️ DANGER ZONE</h3><button class="btn-ios" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); margin-bottom: 10px;" onclick="confirmReset()">🗑️ Reset Full System</button>
+     <p style="font-size: 11px; color: #999; text-align: center;">This will delete ALL records and settings. Cannot be undone!</p>
+    </div><button class="btn-ios" style="background:#8E8E93; margin-top: 15px;" onclick="closeSettings()">Close Settings</button>
+   </div>
+  </div>
+  <div id="updateOverlay">
+   <div class="settings-modal">
+    <h3>Update Payment</h3>
+    <p id="updateWorkDetail"></p><input type="number" id="newPaidAmt" placeholder="New Cash Received (₹)"> <button class="btn-ios" onclick="processPaymentUpdate()">Update &amp; Save</button> <button class="btn-ios" style="background:#8E8E93" onclick="closeUpdate()">Cancel</button>
+   </div>
+  </div>
+  <div id="resetConfirmOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px); z-index:300; display:flex; align-items:center; justify-content:center;">
+   <div class="settings-modal" style="position:static; transform:none; bottom:auto; max-width:350px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:20px;">
+     <div style="font-size:48px; margin-bottom:15px;">
+      ⚠️
+     </div>
+     <h3 style="color:var(--danger); margin:0 0 10px 0;">Are You Sure?</h3>
+     <p style="font-size:13px; color:#64748b; margin:10px 0;">This action will permanently delete:</p>
+     <ul style="text-align:left; font-size:12px; color:#64748b; margin:10px 0; line-height:1.8;">
+      <li>✗ All transaction records</li>
+      <li>✗ All income &amp; expense entries</li>
+      <li>✗ Business settings</li>
+      <li>✗ All data synced to cloud</li>
+     </ul>
+     <p style="font-size:11px; color:var(--danger); font-weight:700; margin:15px 0;">This CANNOT be undone!</p>
+    </div><button class="btn-ios" style="background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); margin-bottom:10px;" onclick="resetFullSystem()">YES, DELETE EVERYTHING</button> <button class="btn-ios" style="background:#8E8E93" onclick="cancelReset()">No, Keep My Data</button>
+   </div>
+  </div>
+  <div id="syncOverlay">
+   <div class="settings-modal">
+    <h3>🌐 Multi-Device Sync Setup</h3><!-- Step 1: Generate Code -->
+    <div id="syncGenerateMode" style="display: block;">
+     <p style="font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.6;"><strong>📱 Device 1 (Primary):</strong><br>
+       Click "Generate Code" to create a unique sync code. Share this code with other devices.</p><button class="btn-ios" onclick="generateSyncCode()">🔐 Generate Sync Code</button> <button class="btn-ios" style="background:#8E8E93; margin-top: 10px;" onclick="closeSync()">Cancel</button>
+    </div><!-- Step 2: Show Generated Code -->
+    <div id="syncCodeDisplay" style="display: none; text-align: center;">
+     <p style="font-size: 12px; color: #64748b; margin-bottom: 15px;">Your Unique Sync Code (valid for 1 hour):</p>
+     <div style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); padding: 20px; border-radius: 14px; margin-bottom: 15px; box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);">
+      <div id="generatedCode" style="font-size: 32px; font-weight: 900; color: white; letter-spacing: 4px; font-family: 'Courier New', monospace;">
+       000000
+      </div>
+     </div>
+     <p style="font-size: 11px; color: #999; margin-bottom: 15px;">📋 Share this code with other devices to sync</p><button class="btn-ios" onclick="copyCodeToClipboard()" style="margin-bottom: 10px;">📋 Copy Code</button> <button class="btn-ios" style="background:#8E8E93" onclick="resetSyncUI()">Back</button>
+    </div><!-- Step 3: Enter Code to Connect -->
+    <div id="syncConnectMode" style="display: none;">
+     <p style="font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.6;"><strong>📱 Device 2+ (Secondary):</strong><br>
+       Enter the sync code from your primary device to connect and sync data.</p><input type="text" id="secretCode" placeholder="Enter 6-digit code" style="font-size: 20px; letter-spacing: 4px; text-align: center; font-weight: 700; font-family: 'Courier New', monospace;" maxlength="6"> <button class="btn-ios" onclick="connectWithCode()" style="margin-top: 15px;">✅ Connect Device</button> <button class="btn-ios" style="background:#8E8E93; margin-top: 10px;" onclick="resetSyncUI()">Back</button>
+    </div><!-- Step 4: Connection Success -->
+    <div id="syncConnected" style="display: none; text-align: center;">
+     <div style="font-size: 48px; margin: 20px 0; animation: bounce 0.6s;">
+      ✅
+     </div>
+     <p style="font-weight: 700; color: var(--success); font-size: 16px;">Connected Successfully!</p>
+     <p style="font-size: 12px; color: #64748b; margin: 15px 0;">Your data will now sync automatically across all connected devices</p>
+     <div style="background: rgba(16, 185, 129, 0.1); padding: 12px; border-radius: 10px; margin: 15px 0; border-left: 3px solid var(--success); font-size: 11px; text-align: left;">
+      <strong>Sync ID:</strong> <code id="displaySyncId" style="font-family: monospace; color: var(--primary);">--</code><br><strong>Status:</strong> 🟢 Active (syncing every 10 seconds)
+     </div><button class="btn-ios" onclick="closeSync()">Done</button>
+    </div><!-- Main Menu -->
+    <div id="syncMainMenu" style="display: block; margin-top: 20px; padding-top: 20px; border-top: 2px solid #ddd;">
+     <p style="font-size: 12px; color: #64748b; margin-bottom: 15px; text-align: center;">Choose your device role:</p><button class="btn-ios" onclick="showGenerateMode()" style="margin-bottom: 10px;">📱 Primary Device (Generate Code)</button> <button class="btn-ios" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); margin-bottom: 10px;" onclick="showConnectMode()">📱 Secondary Device (Enter Code)</button> <button class="btn-ios" style="background:#8E8E93" onclick="closeSync()">Cancel</button>
+    </div>
+   </div>
+  </div>
+  <div id="reportOverlay">
+   <div class="settings-modal" style="max-height: 95vh;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+     <h3 style="margin: 0;">📊 Business Report</h3><i class="fas fa-times" onclick="closeReport()" style="cursor: pointer; font-size: 20px; color: var(--primary);"></i>
+    </div>
+    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+     <input type="date" id="reportStartDate" style="flex: 1;"> <input type="date" id="reportEndDate" style="flex: 1;"> <button class="btn-ios" style="flex: 0.5; padding: 10px;" onclick="filterReport()">Filter</button>
+    </div>
+    <div id="reportStats" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px;">
+     <div class="stat-box" style="padding: 12px; text-align: center;">
+      <div style="font-size: 9px; color: var(--ios-sub);">
+       TOTAL INCOME
+      </div>
+      <div id="reportTotalIncome" style="font-weight: 700; color: var(--ios-green);">
+       ₹0
+      </div>
+     </div>
+     <div class="stat-box" style="padding: 12px; text-align: center;">
+      <div style="font-size: 9px; color: var(--ios-sub);">
+       TOTAL EXPENSE
+      </div>
+      <div id="reportTotalExpense" style="font-weight: 700; color: var(--ios-red);">
+       ₹0
+      </div>
+     </div>
+     <div class="stat-box" style="padding: 12px; text-align: center;">
+      <div style="font-size: 9px; color: var(--ios-sub);">
+       PENDING AMOUNT
+      </div>
+      <div id="reportPending" style="font-weight: 700; color: var(--ios-orange);">
+       ₹0
+      </div>
+     </div>
+     <div class="stat-box" style="padding: 12px; text-align: center;">
+      <div style="font-size: 9px; color: var(--ios-sub);">
+       NET PROFIT
+      </div>
+      <div id="reportNetProfit" style="font-weight: 700; color: var(--primary);">
+       ₹0
+      </div>
+     </div>
+    </div>
+    <div style="background: rgba(255, 255, 255, 0.6); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(99, 102, 241, 0.2);">
+     <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 13px;">📋 CATEGORY BREAKDOWN</h4>
+     <div id="categoryBreakdown" style="font-size: 12px;"></div>
+    </div>
+    <div style="background: rgba(255, 255, 255, 0.6); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(99, 102, 241, 0.2);">
+     <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 13px;">👤 PENDING CUSTOMER WISE</h4>
+     <div id="pendingCustomers" style="font-size: 12px; max-height: 150px; overflow-y: auto;"></div>
+    </div>
+    <div style="margin-bottom: 15px;">
+     <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 13px;">📅 DATE WISE DETAILS</h4>
+     <div id="dateWiseDetails" style="max-height: 300px; overflow-y: auto; font-size: 12px;"></div>
+    </div>
+    <div style="display: flex; gap: 10px; margin-top: 15px;">
+     <button class="btn-ios" style="flex: 1;" onclick="downloadExcel()"><i class="fas fa-download"></i> Download Excel</button> <button class="btn-ios" style="background:#8E8E93; flex: 1;" onclick="closeReport()">Close</button>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Cloud Sync Configuration
+    let records = JSON.parse(localStorage.getItem('tractor_v10_db')) || [];
+    let settings = JSON.parse(localStorage.getItem('tractor_v10_set')) || { name: 'BRAHMA TRANSPORT', tNum: 'OD-XX', logo: '', syncId: '', syncEnabled: false, deviceMode: 'mobile' };
+    let currentCategory = 'Trolley'; 
+    let currentType = 'Income'; 
+    let editingId = null;
+    let syncId = settings.syncId || '';
+    let syncEnabled = settings.syncEnabled || false;
+    let deviceMode = settings.deviceMode || 'mobile';
+
+    function launchApp() {
+        document.getElementById('homePage').style.transform = 'translateY(-100%)';
+        setTimeout(() => {
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            applyDeviceMode();
+            updateSyncIcon();
+            if (settings.syncEnabled) {
+                startPeriodicSync();
+            }
+        }, 600);
+        
+        // Speak welcome message
+        speakWelcome();
+    }
+    
+    // ===== DEVICE MODE FUNCTIONS =====
+    function switchToMobile() {
+        deviceMode = 'mobile';
+        settings.deviceMode = 'mobile';
+        localStorage.setItem('tractor_v10_set', JSON.stringify(settings));
+        applyDeviceMode();
+        showToast('📱 Switched to Mobile Mode');
+    }
+    
+    function switchToDesktop() {
+        deviceMode = 'desktop';
+        settings.deviceMode = 'desktop';
+        localStorage.setItem('tractor_v10_set', JSON.stringify(settings));
+        applyDeviceMode();
+        showToast('🖥️ Switched to Desktop Mode');
+    }
+    
+    function applyDeviceMode() {
+        // Remove all mode classes
+        document.body.classList.remove('mobile-mode', 'desktop-mode');
+        
+        // Add appropriate class
+        if (deviceMode === 'mobile') {
+            document.body.classList.add('mobile-mode');
+            document.getElementById('mobileToggle').style.opacity = '1';
+            document.getElementById('desktopToggle').style.opacity = '0.6';
+        } else {
+            document.body.classList.add('desktop-mode');
+            document.getElementById('desktopToggle').style.opacity = '1';
+            document.getElementById('mobileToggle').style.opacity = '0.6';
+        }
+    }
+
+
+    
+    // Initialize voices on page load
+    let availableVoices = [];
+    
+    function loadVoices() {
+        availableVoices = window.speechSynthesis.getVoices();
+    }
+    
+    // Load voices when they become available
+    if ('onvoiceschanged' in window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+    
+    // Load voices immediately
+    loadVoices();
+
+    function speakWelcome() {
+        if (!window.speechSynthesis) {
+            return;
+        }
+        
+        // Cancel any ongoing speech
+        window.speechSynthesis.cancel();
+        
+        // Create utterance
+        const utterance = new SpeechSynthesisUtterance('Welcome to Brahma Transport Management System');
+        utterance.rate = 0.85;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+        utterance.lang = 'en-US';
+        
+        // Get English voice if available
+        const voice = availableVoices.find(v => v.lang.startsWith('en'));
+        if (voice) {
+            utterance.voice = voice;
+        }
+        
+        try {
+            window.speechSynthesis.speak(utterance);
+        } catch (e) {
+            console.error('Speech error:', e);
+        }
+    }
+
+    function speakIcon(iconName) {
+        if (!window.speechSynthesis) {
+            return;
+        }
+        
+        // Cancel any ongoing speech
+        window.speechSynthesis.cancel();
+        
+        const messages = {
+            'Trolley': 'Trolley. Trips based income',
+            'Rotavator': 'Rotavator. Time based income',
+            'Langala': 'Langala. Time based income',
+            'Diesel': 'Diesel. Fuel expense',
+            'Salary': 'Salary. Employee payment',
+            'Repair': 'Repair. Maintenance expense'
+        };
+        
+        const message = messages[iconName] || iconName;
+        
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.rate = 0.9;
+        utterance.pitch = 1.1;
+        utterance.volume = 1;
+        utterance.lang = 'en-US';
+        
+        // Get English voice if available
+        const voice = availableVoices.find(v => v.lang.startsWith('en'));
+        if (voice) {
+            utterance.voice = voice;
+        }
+        
+        try {
+            window.speechSynthesis.speak(utterance);
+        } catch (e) {
+            console.error('Speech error:', e);
+        }
+    }
+
+    document.getElementById('logoInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onloadend = function() { settings.logo = reader.result; }
+        if(file) reader.readAsDataURL(file);
+    });
+
+    document.getElementById('entryDate').valueAsDate = new Date();
+
+    function updateMode(cat, mode, type, el) {
+        currentCategory = cat; 
+        currentType = type;
+        document.querySelectorAll('.icon-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        
+        // Reset all inputs first
+        document.getElementById('unitQty').style.display = 'block';
+        document.getElementById('unitRate').style.display = 'block';
+        document.getElementById('amountInput').style.display = 'none';
+        document.getElementById('timeInputs').style.display = 'none';
+        
+        // Show/hide amount input for Diesel and Salary
+        if(cat === 'Diesel') {
+            document.getElementById('unitQty').placeholder = 'Liters (ℓ)';
+            document.getElementById('unitRate').placeholder = 'Price per Liter (₹)';
+            document.getElementById('amountInput').style.display = 'block';
+            document.getElementById('amountInput').placeholder = 'OR Direct Amount (₹)';
+        } else if(cat === 'Salary') {
+            document.getElementById('unitQty').style.display = 'none';
+            document.getElementById('unitRate').style.display = 'none';
+            document.getElementById('amountInput').style.display = 'block';
+            document.getElementById('amountInput').placeholder = 'Salary Amount (₹)';
+        } else if(mode === 'Time') {
+            document.getElementById('unitQty').style.display = 'none';
+            document.getElementById('unitRate').placeholder = 'Rate per Hour (₹)';
+            document.getElementById('timeInputs').style.display = 'flex';
+        } else {
+            document.getElementById('unitQty').placeholder = 'Quantity / Trips';
+            document.getElementById('unitRate').placeholder = 'Rate (₹)';
+        }
+        
+        document.getElementById('paidAmt').style.display = (type === 'Income') ? 'block' : 'none';
+        calculateTotal();
+    }
+
+    function calculateTotal() {
+        let total = 0; 
+        const qty = parseFloat(document.getElementById('unitQty').value) || 0;
+        const rate = parseFloat(document.getElementById('unitRate').value) || 0;
+        const directAmount = parseFloat(document.getElementById('amountInput').value) || 0;
+        
+        if(currentCategory === 'Diesel') {
+            // For Diesel: Direct Amount takes priority, otherwise Liters × Rate
+            if(directAmount > 0) {
+                total = directAmount;
+            } else {
+                total = qty * rate;
+            }
+        } else if(currentCategory === 'Salary') {
+            // For Salary: Only direct amount
+            total = directAmount;
+        } else if (document.getElementById('timeInputs').style.display === 'flex') {
+            // For Time-based work (hours + minutes)
+            const hours = parseFloat(document.getElementById('hours').value) || 0;
+            const minutes = parseFloat(document.getElementById('minutes').value) || 0;
+            total = (hours + (minutes / 60)) * rate;
+        } else {
+            // For Qty-based work
+            total = qty * rate;
+        }
+        
+        const paid = parseFloat(document.getElementById('paidAmt').value) || 0;
+        const pending = Math.max(0, total - paid);
+        
+        document.getElementById('autoAmt').innerText = Math.round(total);
+        document.getElementById('pendingDisplay').innerText = '₹' + Math.round(pending);
+    }
+
+    function saveEntry() {
+        const total = parseFloat(document.getElementById('autoAmt').innerText);
+        const paid = parseFloat(document.getElementById('paidAmt').value) || 0;
+        
+        if (!total || total <= 0) {
+            alert('Please enter a valid amount');
+            return;
+        }
+
+        const entry = { 
+            id: Date.now(), 
+            date: document.getElementById('entryDate').value, 
+            work: currentCategory, 
+            type: currentType, 
+            total: total, 
+            paid: (currentType === 'Income') ? paid : total, 
+            pending: (currentType === 'Income') ? (total - paid) : 0, 
+            note: document.getElementById('note').value || (currentCategory === 'Diesel' ? 'Diesel Refill' : currentCategory === 'Salary' ? 'Salary Payment' : 'User'), 
+            phone: document.getElementById('custPhone').value || '' 
+        };
+        records.push(entry); 
+        localStorage.setItem('tractor_v10_db', JSON.stringify(records)); 
+        
+        // Sync to cloud if enabled
+        if (syncEnabled && syncId) {
+            syncDataToCloud();
+        }
+        
+        showToast('Entry saved ✓');
+        render();
+        if(entry.phone && currentType === 'Income' && entry.pending > 0) shareWhatsApp(entry.id);
+        document.getElementById('note').value = ""; 
+        document.getElementById('paidAmt').value = ""; 
+        document.getElementById('unitRate').value = "";
+        document.getElementById('unitQty').value = "";
+        document.getElementById('amountInput').value = "";
+        document.getElementById('hours').value = "";
+        document.getElementById('minutes').value = "";
+        calculateTotal();
+    }
+
+    function render() {
+        const list = document.getElementById('historyList'); 
+        list.innerHTML = "";
+        let tInc = 0, tExp = 0, tPend = 0;
+        records.slice().reverse().forEach(item => {
+            if(item.type === 'Income') { tInc += item.paid; tPend += item.pending; } else { tExp += item.total; }
+            list.innerHTML += `
+                <div class="history-card">
+                    <div><strong>${item.work}</strong><br><small>${item.note}</small><br>
+                    <small style="color:var(--ios-orange)">Paid: ₹${Math.round(item.paid)} | Bal: ₹${Math.round(item.pending)}</small><br>
+                    ${item.pending > 0 ? `<button class="update-btn" onclick="openUpdate(${item.id})">Update Payment</button>` : ''}</div>
+                    <div style="display:flex; align-items:center; gap:8px;"><span style="font-weight:700; color:${item.type==='Income'?'var(--ios-green)':'var(--ios-red)'}">₹${Math.round(item.total)}</span>
+                    <div class="share-circle" onclick="shareWhatsApp(${item.id})"><i class="fab fa-whatsapp"></i></div></div>
+                </div>`;
+        });
+        document.getElementById('totalInc').innerText = "₹" + Math.round(tInc);
+        document.getElementById('totalExp').innerText = "₹" + Math.round(tExp);
+        document.getElementById('totalPend').innerText = "₹" + Math.round(tPend);
+        document.getElementById('netProfit').innerText = "₹" + Math.round(tInc - tExp);
+    }
+
+    function shareWhatsApp(id) {
+        const item = records.find(r => r.id === id);
+        let msg = `*${settings.name}*%0A*RECEIPT*%0A*Work:* ${item.work}%0A*Total:* ₹${Math.round(item.total)}%0A*Paid:* ₹${Math.round(item.paid)}%0A*Bal:* ₹${Math.round(item.pending)}%0A*Customer:* ${item.note}%0A--------------------------%0A*Status:* ${item.pending <= 0 ? 'Paid ✅' : 'Pending ⚠️'}`;
+        window.open(item.phone ? `https://wa.me/91${item.phone}?text=${msg}` : `https://wa.me/?text=${msg}`, '_blank');
+    }
+
+    function openUpdate(id) { 
+        editingId = id; 
+        const item = records.find(r => r.id === id);
+        document.getElementById('updateWorkDetail').innerHTML = `<strong>${item.work}</strong><br>Total: ₹${Math.round(item.total)}<br>Already Paid: ₹${Math.round(item.paid)}`;
+        document.getElementById('updateOverlay').style.display = 'block'; 
+    }
+    
+    function closeUpdate() { 
+        document.getElementById('updateOverlay').style.display = 'none'; 
+        document.getElementById('newPaidAmt').value = '';
+    }
+    
+    function processPaymentUpdate() {
+        const newPaid = parseFloat(document.getElementById('newPaidAmt').value) || 0;
+        if (newPaid <= 0) {
+            alert('Please enter a valid amount');
+            return;
+        }
+        const item = records.find(r => r.id === editingId);
+        item.paid += newPaid;
+        item.pending = Math.max(0, item.total - item.paid);
+        localStorage.setItem('tractor_v10_db', JSON.stringify(records));
+        
+        // Sync to cloud if enabled
+        if (syncEnabled && syncId) {
+            syncDataToCloud();
+        }
+        
+        showToast('Payment updated ✓');
+        closeUpdate(); 
+        render();
+    }
+
+    function openSettings() { 
+        document.getElementById('setTransport').value = settings.name;
+        document.getElementById('setTractorNum').value = settings.tNum;
+        document.getElementById('settingsOverlay').style.display = 'block'; 
+    }
+    
+    function closeSettings() { 
+        document.getElementById('settingsOverlay').style.display = 'none'; 
+    }
+    
+    function saveSettings() {
+        settings.name = document.getElementById('setTransport').value || 'BRAHMA TRANSPORT';
+        settings.tNum = document.getElementById('setTractorNum').value || 'OD-XX';
+        settings.syncId = syncId;
+        settings.syncEnabled = syncEnabled;
+        settings.deviceMode = deviceMode;
+        localStorage.setItem('tractor_v10_set', JSON.stringify(settings));
+        
+        // Sync to cloud if enabled
+        if (syncEnabled && syncId) {
+            syncDataToCloud();
+        }
+        
+        showToast('Settings saved ✓');
+        applyBranding(); 
+        closeSettings();
+    }
+
+    function applyBranding() {
+        document.getElementById('homeTransport').innerText = settings.name;
+        document.getElementById('displayTransport').innerText = settings.name;
+        document.getElementById('displayDetail').innerText = "Tractor: " + settings.tNum;
+        if(settings.logo) {
+            document.getElementById('homeLogoImg').src = settings.logo;
+            document.getElementById('homeLogoImg').style.display = 'block';
+            document.getElementById('logoPlaceholder').style.display = 'none';
+            document.getElementById('headerLogoImg').src = settings.logo;
+            document.getElementById('headerLogoImg').style.display = 'block';
+        }
+    }
+
+    function showToast(msg) {
+        const toast = document.createElement('div');
+        toast.className = 'success-toast';
+        toast.innerText = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    }
+
+    applyBranding(); 
+    render();
+    
+    // ===== MULTI-DEVICE SYNC FUNCTIONS (IMPROVED) =====
+    const SYNC_CODE_LENGTH = 6;
+    const SYNC_CODE_VALIDITY = 3600000; // 1 hour in milliseconds
+    let generatedSyncCode = null;
+    let generatedCodeTimestamp = null;
+    
+    function openSync() {
+        document.getElementById('syncOverlay').style.display = 'block';
+        resetSyncUI();
+    }
+    
+    function closeSync() {
+        document.getElementById('syncOverlay').style.display = 'none';
+        resetSyncUI();
+    }
+    
+    function resetSyncUI() {
+        document.getElementById('syncMainMenu').style.display = 'block';
+        document.getElementById('syncGenerateMode').style.display = 'none';
+        document.getElementById('syncCodeDisplay').style.display = 'none';
+        document.getElementById('syncConnectMode').style.display = 'none';
+        document.getElementById('syncConnected').style.display = 'none';
+        document.getElementById('secretCode').value = '';
+    }
+    
+    function showGenerateMode() {
+        document.getElementById('syncMainMenu').style.display = 'none';
+        document.getElementById('syncGenerateMode').style.display = 'block';
+    }
+    
+    function showConnectMode() {
+        document.getElementById('syncMainMenu').style.display = 'none';
+        document.getElementById('syncConnectMode').style.display = 'block';
+        document.getElementById('secretCode').value = '';
+        document.getElementById('secretCode').focus();
+    }
+    
+    function generateSyncCode() {
+        // Generate random 6-digit code
+        generatedSyncCode = Math.floor(100000 + Math.random() * 900000).toString();
+        generatedCodeTimestamp = Date.now();
+        
+        // Store code globally so it can be accessed from other devices
+        storeActiveCode(generatedSyncCode);
+        
+        // Show generated code
+        document.getElementById('syncGenerateMode').style.display = 'none';
+        document.getElementById('syncCodeDisplay').style.display = 'block';
+        document.getElementById('generatedCode').innerText = generatedSyncCode;
+        
+        // Auto-hide after 1 hour
+        setTimeout(() => {
+            if (generatedSyncCode === document.getElementById('generatedCode').innerText) {
+                generatedSyncCode = null;
+                showToast('⏰ Sync code expired. Generate a new one.');
+            }
+        }, SYNC_CODE_VALIDITY);
+    }
+    
+    function copyCodeToClipboard() {
+        const code = document.getElementById('generatedCode').innerText;
+        
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(code).then(() => {
+                showToast('✅ Code copied to clipboard!');
+            });
+        } else {
+            // Fallback for older browsers
+            const input = document.createElement('input');
+            input.value = code;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            showToast('✅ Code copied to clipboard!');
+        }
+    }
+    
+    function connectWithCode() {
+        const enteredCode = document.getElementById('secretCode').value.trim();
+        
+        if (!enteredCode) {
+            showToast('❌ Please enter a sync code');
+            return;
+        }
+        
+        if (enteredCode.length !== SYNC_CODE_LENGTH) {
+            showToast('❌ Code must be 6 digits');
+            return;
+        }
+        
+        // Check if code exists in active codes
+        const storedCodes = JSON.parse(localStorage.getItem('tractor_active_codes') || '[]');
+        const codeFound = storedCodes.find(c => c.code === enteredCode);
+        
+        if (!codeFound) {
+            showToast('❌ Invalid or expired code. Ask primary device to generate new code.');
+            return;
+        }
+        
+        // Check if code is not expired
+        if ((Date.now() - codeFound.timestamp) > SYNC_CODE_VALIDITY) {
+            showToast('❌ Code expired. Ask primary device to generate new code.');
+            return;
+        }
+        
+        // Generate unique sync ID
+        if (!syncId) {
+            syncId = 'sync_' + enteredCode + '_' + Math.random().toString(36).substr(2, 5);
+        }
+        
+        // Enable sync
+        syncEnabled = true;
+        settings.syncId = syncId;
+        settings.syncEnabled = syncEnabled;
+        localStorage.setItem('tractor_v10_set', JSON.stringify(settings));
+        
+        // Sync current data
+        syncDataToCloud();
+        
+        // Show success screen
+        document.getElementById('syncConnectMode').style.display = 'none';
+        document.getElementById('syncCodeDisplay').style.display = 'none';
+        document.getElementById('syncConnected').style.display = 'block';
+        document.getElementById('displaySyncId').innerText = syncId;
+        
+        // Update sync icon
+        updateSyncIcon();
+        
+        // Start periodic sync
+        startPeriodicSync();
+        
+        // Auto close after 3 seconds
+        setTimeout(() => closeSync(), 3000);
+    }
+    
+    function syncDataToCloud() {
+        if (!syncEnabled || !syncId) return;
+        
+        const dataToSync = {
+            records: records,
+            settings: settings,
+            timestamp: new Date().toISOString()
+        };
+        
+        // Store in localStorage (using syncId as key)
+        localStorage.setItem('tractor_cloud_' + syncId, JSON.stringify(dataToSync));
+        
+        console.log('✅ Data synced to cloud:', syncId);
+    }
+    
+    function pullDataFromCloud() {
+        if (!syncEnabled || !syncId) return;
+        
+        const cloudData = localStorage.getItem('tractor_cloud_' + syncId);
+        if (cloudData) {
+            const data = JSON.parse(cloudData);
+            
+            // Merge cloud data with local data (cloud takes precedence for timestamps)
+            const cloudRecords = data.records || [];
+            const localRecordIds = new Set(records.map(r => r.id));
+            
+            // Add any new records from cloud
+            cloudRecords.forEach(cloudRecord => {
+                if (!localRecordIds.has(cloudRecord.id)) {
+                    records.push(cloudRecord);
+                }
+            });
+            
+            // Update settings
+            if (data.settings) {
+                settings = { ...settings, ...data.settings };
+            }
+            
+            localStorage.setItem('tractor_v10_db', JSON.stringify(records));
+            localStorage.setItem('tractor_v10_set', JSON.stringify(settings));
+            render();
+            applyBranding();
+            console.log('✅ Data pulled from cloud:', syncId);
+        }
+    }
+    
+    let syncInterval = null;
+    
+    function startPeriodicSync() {
+        // Clear any existing interval
+        if (syncInterval) clearInterval(syncInterval);
+        
+        // Sync every 10 seconds
+        syncInterval = setInterval(() => {
+            if (syncEnabled && syncId) {
+                pullDataFromCloud();
+                syncDataToCloud();
+            }
+        }, 10000);
+    }
+    
+    function updateSyncIcon() {
+        const icon = document.getElementById('syncIcon');
+        if (syncEnabled) {
+            icon.style.color = 'var(--success)';
+            icon.title = '✅ Multi-device sync is ACTIVE';
+        } else {
+            icon.style.color = 'var(--primary)';
+            icon.title = 'Click to setup sync';
+        }
+    }
+    
+    // Store generated code for this session
+    function storeActiveCode(code) {
+        const storedCodes = JSON.parse(localStorage.getItem('tractor_active_codes') || '[]');
+        storedCodes.push({ code: code, timestamp: Date.now() });
+        
+        // Keep only codes from last hour
+        const validCodes = storedCodes.filter(c => (Date.now() - c.timestamp) < SYNC_CODE_VALIDITY);
+        localStorage.setItem('tractor_active_codes', JSON.stringify(validCodes));
+    }
+    
+    // Initialize sync on page load
+    if (settings.syncEnabled) {
+        syncEnabled = true;
+        syncId = settings.syncId;
+        updateSyncIcon();
+        pullDataFromCloud();
+        startPeriodicSync();
+    }
+    
+    // Apply device mode on page load
+    applyDeviceMode();
+    
+    // Make sure all overlays stay hidden on load
+    document.getElementById('settingsOverlay').style.display = 'none';
+    document.getElementById('updateOverlay').style.display = 'none';
+    document.getElementById('syncOverlay').style.display = 'none';
+    document.getElementById('reportOverlay').style.display = 'none';
+    document.getElementById('resetConfirmOverlay').style.display = 'none';
+
+    // ===== RESET SYSTEM FUNCTIONS =====
+    function confirmReset() {
+        document.getElementById('resetConfirmOverlay').style.display = 'flex';
+    }
+    
+    function cancelReset() {
+        document.getElementById('resetConfirmOverlay').style.display = 'none';
+    }
+    
+    function resetFullSystem() {
+        // Delete all data
+        records = [];
+        settings = { name: 'BRAHMA TRANSPORT', tNum: 'OD-XX', logo: '', syncId: '', syncEnabled: false, deviceMode: 'mobile' };
+        syncId = '';
+        syncEnabled = false;
+        deviceMode = 'mobile';
+        editingId = null;
+        
+        // Clear localStorage
+        localStorage.removeItem('tractor_v10_db');
+        localStorage.removeItem('tractor_v10_set');
+        
+        // Clear all cloud sync data
+        const allKeys = Object.keys(localStorage);
+        allKeys.forEach(key => {
+            if (key.startsWith('tractor_cloud_')) {
+                localStorage.removeItem(key);
+            }
+        });
+        
+        // Reset UI
+        document.getElementById('setTransport').value = 'BRAHMA TRANSPORT';
+        document.getElementById('setTractorNum').value = 'OD-XX';
+        document.getElementById('note').value = '';
+        document.getElementById('paidAmt').value = '';
+        document.getElementById('unitRate').value = '';
+        document.getElementById('unitQty').value = '';
+        document.getElementById('amountInput').value = '';
+        document.getElementById('hours').value = '';
+        document.getElementById('minutes').value = '';
+        
+        // Reset input styles
+        document.getElementById('unitQty').style.display = 'block';
+        document.getElementById('unitRate').style.display = 'block';
+        document.getElementById('amountInput').style.display = 'none';
+        document.getElementById('timeInputs').style.display = 'none';
+        document.getElementById('paidAmt').style.display = 'block';
+        
+        // Reset to mobile mode
+        applyDeviceMode();
+        
+        // Update UI
+        updateSyncIcon();
+        applyBranding();
+        render();
+        cancelReset();
+        closeSettings();
+        
+        showToast('🗑️ System reset complete! Starting fresh...');
+    }
+
+    // ===== REPORT & ANALYTICS FUNCTIONS =====
+    function openReport() {
+        document.getElementById('reportOverlay').style.display = 'block';
+        
+        // Set date range to current month
+        const today = new Date();
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        document.getElementById('reportStartDate').valueAsDate = firstDay;
+        document.getElementById('reportEndDate').valueAsDate = today;
+        
+        generateReport();
+    }
+    
+    function closeReport() {
+        document.getElementById('reportOverlay').style.display = 'none';
+    }
+    
+    function filterReport() {
+        generateReport();
+    }
+    
+    function generateReport() {
+        const startDate = new Date(document.getElementById('reportStartDate').value);
+        const endDate = new Date(document.getElementById('reportEndDate').value);
+        endDate.setDate(endDate.getDate() + 1); // Include entire end date
+        
+        // Filter records by date
+        const filteredRecords = records.filter(item => {
+            const itemDate = new Date(item.date);
+            return itemDate >= startDate && itemDate < endDate;
+        });
+        
+        // Calculate totals
+        let totalIncome = 0, totalExpense = 0, totalPending = 0;
+        let categoryStats = {}, customerStats = {}, dateStats = {};
+        
+        filteredRecords.forEach(item => {
+            // Totals
+            if (item.type === 'Income') {
+                totalIncome += item.paid;
+                totalPending += item.pending;
+            } else {
+                totalExpense += item.total;
+            }
+            
+            // Category breakdown
+            if (!categoryStats[item.work]) {
+                categoryStats[item.work] = { count: 0, total: 0, type: item.type };
+            }
+            categoryStats[item.work].count++;
+            categoryStats[item.work].total += item.type === 'Income' ? item.paid : item.total;
+            
+            // Customer/Pending stats
+            if (item.pending > 0) {
+                const key = item.note + ' (' + item.phone + ')';
+                if (!customerStats[key]) {
+                    customerStats[key] = { pending: 0, work: item.work };
+                }
+                customerStats[key].pending += item.pending;
+            }
+            
+            // Date wise
+            if (!dateStats[item.date]) {
+                dateStats[item.date] = { income: 0, expense: 0, trips: 0, items: [] };
+            }
+            if (item.type === 'Income') {
+                dateStats[item.date].income += item.paid;
+                dateStats[item.date].trips++;
+            } else {
+                dateStats[item.date].expense += item.total;
+            }
+            dateStats[item.date].items.push(item);
+        });
+        
+        const netProfit = totalIncome - totalExpense;
+        
+        // Update stats
+        document.getElementById('reportTotalIncome').innerText = '₹' + Math.round(totalIncome);
+        document.getElementById('reportTotalExpense').innerText = '₹' + Math.round(totalExpense);
+        document.getElementById('reportPending').innerText = '₹' + Math.round(totalPending);
+        document.getElementById('reportNetProfit').innerText = '₹' + Math.round(netProfit);
+        
+        // Category breakdown
+        let categoryHtml = '';
+        Object.keys(categoryStats).sort().forEach(cat => {
+            const stat = categoryStats[cat];
+            categoryHtml += `
+                <div style="padding: 8px; margin-bottom: 8px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; border-left: 3px solid var(--primary);">
+                    <strong>${cat}</strong> • ${stat.count} ${stat.type === 'Income' ? 'trips' : 'entries'}<br>
+                    💰 ₹${Math.round(stat.total)}
+                </div>
+            `;
+        });
+        document.getElementById('categoryBreakdown').innerHTML = categoryHtml || '<p style="color: #999;">No data</p>';
+        
+        // Pending customers
+        let pendingHtml = '';
+        Object.keys(customerStats).sort().forEach(customer => {
+            const stat = customerStats[customer];
+            pendingHtml += `
+                <div style="padding: 8px; margin-bottom: 8px; background: rgba(245, 158, 11, 0.1); border-radius: 8px; border-left: 3px solid var(--accent);">
+                    <strong>${customer}</strong><br>
+                    ⏳ Pending: ₹${Math.round(stat.pending)} | Work: ${stat.work}
+                </div>
+            `;
+        });
+        document.getElementById('pendingCustomers').innerHTML = pendingHtml || '<p style="color: #999;">All paid! ✅</p>';
+        
+        // Date wise details
+        let dateHtml = '';
+        Object.keys(dateStats).sort().reverse().forEach(date => {
+            const dayData = dateStats[date];
+            dateHtml += `
+                <div style="background: rgba(99, 102, 241, 0.08); padding: 10px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <div style="font-weight: 700; margin-bottom: 8px; color: var(--primary);">📅 ${new Date(date).toLocaleDateString('en-IN')}</div>
+                    <div style="padding-left: 10px; font-size: 11px; line-height: 1.6;">
+            `;
+            
+            dayData.items.forEach(item => {
+                dateHtml += `
+                    <div style="margin-bottom: 6px; padding: 6px; background: rgba(255,255,255,0.5); border-radius: 6px;">
+                        <strong style="color: ${item.type === 'Income' ? 'var(--ios-green)' : 'var(--ios-red)'};">${item.work}</strong> • ${item.note}<br>
+                        Amount: ₹${Math.round(item.total)} | Paid: ₹${Math.round(item.paid)} | Pending: ₹${Math.round(item.pending)}
+                    </div>
+                `;
+            });
+            
+            dateHtml += `
+                    </div>
+                    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.1); font-weight: 600; font-size: 11px;">
+                        💰 Income: ₹${Math.round(dayData.income)} | 💸 Expense: ₹${Math.round(dayData.expense)} | 🚜 Trips: ${dayData.trips}
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('dateWiseDetails').innerHTML = dateHtml || '<p style="color: #999;">No entries for this period</p>';
+    }
+    
+    function downloadExcel() {
+        const startDate = document.getElementById('reportStartDate').value;
+        const endDate = document.getElementById('reportEndDate').value;
+        
+        // Filter records
+        const startD = new Date(startDate);
+        const endD = new Date(endDate);
+        endD.setDate(endD.getDate() + 1);
+        
+        const filteredRecords = records.filter(item => {
+            const itemDate = new Date(item.date);
+            return itemDate >= startD && itemDate < endD;
+        });
+        
+        // Create CSV data
+        let csv = 'BRAHMA TRANSPORT - BUSINESS REPORT\n';
+        csv += `Report Period: ${startDate} to ${endDate}\n`;
+        csv += `Generated: ${new Date().toLocaleString('en-IN')}\n\n`;
+        
+        // Summary section
+        let totalIncome = 0, totalExpense = 0, totalPending = 0;
+        filteredRecords.forEach(item => {
+            if (item.type === 'Income') {
+                totalIncome += item.paid;
+                totalPending += item.pending;
+            } else {
+                totalExpense += item.total;
+            }
+        });
+        
+        csv += 'SUMMARY\n';
+        csv += `Total Income,₹${Math.round(totalIncome)}\n`;
+        csv += `Total Expense,₹${Math.round(totalExpense)}\n`;
+        csv += `Pending Amount,₹${Math.round(totalPending)}\n`;
+        csv += `Net Profit,₹${Math.round(totalIncome - totalExpense)}\n\n`;
+        
+        // Detailed entries
+        csv += 'DETAILED ENTRIES\n';
+        csv += 'Date,Work Type,Customer/Driver,Amount,Paid,Pending,Phone,Category\n';
+        
+        filteredRecords.forEach(item => {
+            csv += `"${item.date}","${item.work}","${item.note}",₹${Math.round(item.total)},₹${Math.round(item.paid)},₹${Math.round(item.pending)}","${item.phone}","${item.type}"\n`;
+        });
+        
+        // Download
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `Brahma_Report_${startDate}_to_${endDate}.csv`;
+        link.click();
+        
+        showToast('✅ Excel file downloaded!');
+    }
+
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9eb7b237b1dd7686',t:'MTc3NjA1NDIxNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
